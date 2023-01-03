@@ -1,19 +1,19 @@
-#ifndef X86ENCODER_H
-#define X86ENCODER_H
+#ifndef AARCH64ENCODER_H
+#define AARCH64ENCODER_H
 
 #include <QObject>
 
 #include "Encoder.h"
 
 
-class X86Encoder: public Encoder
+class AARCH64Encoder: public Encoder
 {
     Q_OBJECT
 
 public:
 
-    X86Encoder(QObject *parent = nullptr);
-    ~X86Encoder();
+    AARCH64Encoder(QObject *parent = nullptr);
+    ~AARCH64Encoder();
     virtual size_t encodeBlock(void *buffer, QSharedPointer<CodeBlock> &code);
     virtual size_t preamble(void *buffer, QSharedPointer<CodeBlock> &code);
     virtual size_t postamble(void *buffer, QSharedPointer<CodeBlock> &code);

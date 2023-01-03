@@ -53,6 +53,8 @@ void Host::runCode(QSharedPointer<CodeBlock> &block)
 
 #ifdef Q_PROCESSOR_X86
 #include "X86Host.cpp.inc"
+#elif defined(Q_PROCESSOR_ARM)
+#include "ARMHost.cpp.inc"
 #else
 #error "Undefined host processor type"
 #endif
