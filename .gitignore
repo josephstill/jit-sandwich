@@ -1,1 +1,8 @@
 .vscode
+bin/
+moc/
+obj/
+test/cpu/moc/
+test/memory/moc/
+test/resources/test.rcc
+
