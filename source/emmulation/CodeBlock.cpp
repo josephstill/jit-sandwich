@@ -18,7 +18,12 @@ CodeBlock::~CodeBlock()
 
 size_t CodeBlock::addInstruction(TranslationInstruction &instruction)
 {
-    
+    return 0;
+}
+
+void CodeBlock::deadCodeOptimization() 
+{
+
 }
 
 void CodeBlock::finalize() 
@@ -27,10 +32,15 @@ void CodeBlock::finalize()
     this->deadCodeOptimization();
 }
 
-TranslationInstruction &CodeBlock::operator[](size_t offset)
+void CodeBlock::livenessOptimization() 
 {
 
 }
+
+// TranslationInstruction &CodeBlock::operator[](size_t offset)
+// {
+//     return nullptr;
+// }
 
 void CodeBlock::setCache(void *cache, size_t cacheSize)
 {

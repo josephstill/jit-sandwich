@@ -11,8 +11,8 @@ public:
 
     Platform(QObject *parent = nullptr);
     ~Platform();
-    void *allocateCodeBuffer();
-    void freeCodeBuffer(void *buffer);
+    void *allocateCodeBuffer(size_t size);
+    void freeCodeBuffer(void *buffer, size_t size);
     bool lockCodeBuffer(void *buffer, size_t size);    
 
 private:

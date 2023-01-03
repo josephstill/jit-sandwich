@@ -7,7 +7,6 @@
 #include "Encoder.h"
 #include "Platform.h"
 #include "CodeBlock.h"
-#include "global_defs.h"
 #include "Environ.h"
 
 class Host: public QObject
@@ -25,7 +24,7 @@ public:
     Platform &platform() { return this->_platform; }
     void runCode(QSharedPointer<CodeBlock> &block);
 
-public signals:
+signals:
 
     void blockExecutionStarting();
     void blockExecutionStopping();

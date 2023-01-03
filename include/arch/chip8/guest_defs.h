@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-typedef uint16_t  GuestAddress;
+typedef uint16_t GuestAddress;
 
 typedef union Chip8Instruction
 {

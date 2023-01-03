@@ -1,3 +1,6 @@
+#ifndef ENCODER_H
+#define ENCODER_H
+
 #include <QObject>
 
 #include "CodeBlock.h"
@@ -15,3 +18,5 @@ public:
     virtual size_t preamble(void *buffer, QSharedPointer<CodeBlock> &code) = 0;
     virtual size_t postamble(void *buffer, QSharedPointer<CodeBlock> &code) = 0;
 };
+
+#endif

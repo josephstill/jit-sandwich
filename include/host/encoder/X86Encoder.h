@@ -11,6 +11,7 @@ public:
 
     X86Encoder(QObject *parent = nullptr);
     ~X86Encoder();
-    virtual size_t preamble(void *buffer);
-    virtual size_t postamble(void *buffer);
+    virtual size_t encodeBlock(void *buffer, QSharedPointer<CodeBlock> &code);
+    virtual size_t preamble(void *buffer, QSharedPointer<CodeBlock> &code);
+    virtual size_t postamble(void *buffer, QSharedPointer<CodeBlock> &code);
 };

@@ -21,7 +21,7 @@ void Rom::enableExecute()
     this->setExecute(true);
 }
 
-uint8_t *PhysicalMemory::toBuffer(GuestAddress offset, size_t size)
+uint8_t *Rom::toBuffer(GuestAddress offset, size_t size)
 {
-        
+    return 0;
 }

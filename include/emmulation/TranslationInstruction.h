@@ -37,7 +37,7 @@ public:
     void addSourceLabel(QSharedPointer<TranslationLabel> &srcLabel) { this->_sourceLabel = srcLabel; }
     bool valid() const { return this->_valid; }
 
-    friend ostream& operator<<(ostream& os, const TranslationInstruction &inst);
+    friend std::ostream& operator<<(std::ostream& os, const TranslationInstruction &inst);
 
 private:
 

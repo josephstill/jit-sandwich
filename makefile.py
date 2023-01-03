@@ -148,7 +148,8 @@ class Build(object):
             if item.is_dir() and item.name != 'arch':
                 ret += self.collect_source(item)
             elif item.is_file():
-                ret.append(item)
+                if item.suffix != ".inc":
+                   ret.append(item)
         return ret
 
     def collect_tests(self, directory: Path) -> List[Path]:

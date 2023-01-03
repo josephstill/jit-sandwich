@@ -1,4 +1,4 @@
-#include "Host.h"
+#include "Platform.h"
 
 Platform::Platform(QObject *parent):
     QObject(parent)
@@ -12,9 +12,9 @@ Platform::~Platform()
 }
 
 #ifdef Q_OS_LINUX
-#include "LinuxHost.cpp.inc"
+#include "LinuxPlatform.cpp.inc"
 #elif defined(Q_OS_WINDOWS)
-#include "WindowsHost.cpp.inc"
+#include "WindowsPlatform.cpp.inc"
 #else
 #error "Undefined target platform"
 #endif

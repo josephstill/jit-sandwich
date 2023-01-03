@@ -16,9 +16,10 @@ Host::~Host()
 void Host::destroyCode(QSharedPointer<CodeBlock> &block)
 {
     void *code = block->cache();
+    size_t block_size = block->size();
     if (code)
     {
-        this->_platform.freeCodeBuffer(code);
+        this->_platform.freeCodeBuffer(code, block_size);
         block->setCache(nullptr, 0);
     }
 }
@@ -44,7 +45,7 @@ void Host::runCode(QSharedPointer<CodeBlock> &block)
         block->setCache(code, codeSize);
     }
 
-    e = block->cache();
+    e = (execute) block->cache();
     emit blockExecutionStarting();
     e();
     emit blockExecutionStopping();

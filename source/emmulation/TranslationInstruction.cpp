@@ -56,7 +56,7 @@ TranslationInstruction::~TranslationInstruction()
 
 }
  
-friend ostream& operator<<(ostream& os, const TranslationInstruction &inst)
+std::ostream& operator<<(std::ostream& os, const TranslationInstruction &inst)
 {
- 
+    return os;
 }

@@ -26,7 +26,7 @@ public:
     ~Decoder();
     bool decode(QSharedPointer<CodeBlock> &block);
 
-public signals:
+signals:
 
     void blockCompleted(FlowType reason);    
 

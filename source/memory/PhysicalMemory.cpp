@@ -114,5 +114,5 @@ void PhysicalMemory::reset()
 
 uint8_t *PhysicalMemory::toBuffer(GuestAddress offset, size_t size)
 {
-    
+    return 0;
 }

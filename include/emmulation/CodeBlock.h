@@ -18,7 +18,7 @@ public:
     size_t cacheSize() const { return this->_cacheSize; }
     Context &context() { return this->_context; }
     void finalize();
-    TranslationInstruction &operator[](size_t offset);
+    //TranslationInstruction &operator[](size_t offset);
     void setCache(void *cache, size_t cacheSize);
     size_t size() const { return this->_size; }
 

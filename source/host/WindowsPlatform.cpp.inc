@@ -1,11 +1,21 @@
 #include <Windows.h>
 
-void *Platform::allocateCodeBuffer()
+void *Platform::allocateCodeBuffer(size_t size)
 {
     return 0;
 }
 
-void Platform::freeCodeBuffer(void *buffer)
+void Platform::cleanUp() 
+{
+    return;
+}
+
+void Platform::init() 
+{
+    return;
+}
+
+void Platform::freeCodeBuffer(void *buffer, size_t size)
 {
     return;
 }

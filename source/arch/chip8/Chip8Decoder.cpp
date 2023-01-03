@@ -228,23 +228,22 @@ Chip8Decoder::~Chip8Decoder()
 
 bool Chip8Decoder::blockInit(QSharedPointer<CodeBlock> &block) 
 {
-
+    return false;
 }
 
 bool Chip8Decoder::blockComplete(QSharedPointer<CodeBlock> &block) 
 {
-
+    return false;
 }
 
 bool Chip8Decoder::instructionComplete(QSharedPointer<CodeBlock> &block) 
 {
-
+    return false;
 }
 
 size_t Chip8Decoder::instructionDecode(QSharedPointer<CodeBlock> &block, uint8_t *fetch) 
 {
-    Chip8Instruction instriction;
-    instriction.instruction = *((Chip8Instruction *) fetch);
+    Chip8Instruction instriction = *((Chip8Instruction *) fetch);
     this->callbacks.opaque = block.data();
     decodeChip8(instriction, &this->callbacks);
     this->callbacks.opaque = nullptr;
@@ -253,5 +252,5 @@ size_t Chip8Decoder::instructionDecode(QSharedPointer<CodeBlock> &block, uint8_t
 
 bool Chip8Decoder::instructionInit(QSharedPointer<CodeBlock> &block) 
 {
-
+    return false;
 }
