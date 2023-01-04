@@ -3,50 +3,10 @@
     
 TranslationInstruction::TranslationInstruction(OpCode opcode, QObject *parent):
     QObject(parent),    
-    _destLabel(nullptr),
-    _immediate(0),
+    _canOptimize(false),
+    _destinationLabel(),   
     _op(opcode),
-    _sourceLabel(nullptr),
-    _valid(false) 
-{
-
-}
-
-TranslationInstruction::TranslationInstruction(OpCode opcode, TranslationRegister &dest, TranslationRegister &src,  QObject *parent):
-    QObject(parent),    
-    _destLabel(nullptr),
-    _immediate(0),
-    _op(opcode),
-    _sourceLabel(nullptr),
-    _valid(false)
-{
-
-}
-
-TranslationInstruction::TranslationInstruction(OpCode opcode, TranslationRegister &dest, TranslationRegister &src,  uint64_t immediate, QObject *parent): 
-    QObject(parent),    
-    _destLabel(nullptr),
-    _immediate(0),
-    _op(opcode),
-    _sourceLabel(nullptr),
-    _valid(false)
-{
-
-}
-
-TranslationInstruction::TranslationInstruction(OpCode opcode, TranslationRegister &dest, TranslationRegister &src1, TranslationRegister &src2, QObject *parent): 
-    QObject(parent),    
-    _destLabel(nullptr),
-    _immediate(0),
-    _op(opcode),
-    _sourceLabel(nullptr),
-    _valid(false)
-{
-
-}
-
-TranslationInstruction::TranslationInstruction(const TranslationInstruction &instruction):
-    QObject(instruction.parent()) 
+    _sourceLabel()
 {
 
 }
@@ -56,7 +16,64 @@ TranslationInstruction::~TranslationInstruction()
 
 }
  
-std::ostream& operator<<(std::ostream& os, const TranslationInstruction &inst)
+
+QSharedPointer<TranslationInstruction> TranslationInstruction::build(OpCode opcode) 
 {
-    return os;
+    QSharedPointer<TranslationInstruction> ret(new TranslationInstruction(opcode));
+    return ret;
+}
+
+QSharedPointer<TranslationInstruction> TranslationInstruction::build(OpCode opcode, 
+                                                                     QSharedPointer<TranslationRegister> &dest, 
+                                                                     QSharedPointer<TranslationRegister> &src) 
+{
+    QSharedPointer<TranslationInstruction> ret(new TranslationInstruction(opcode));
+    return ret;
+}
+
+QSharedPointer<TranslationInstruction> TranslationInstruction::build(OpCode opcode, 
+                                                                     QSharedPointer<TranslationRegister> &dest, 
+                                                                     uint64_t immediate)
+{
+    QSharedPointer<TranslationInstruction> ret(new TranslationInstruction(opcode));
+    return ret;
+}
+
+QSharedPointer<TranslationInstruction> TranslationInstruction::build(OpCode opcode, 
+                                                                     QSharedPointer<TranslationRegister> &dest, 
+                                                                     QSharedPointer<TranslationRegister> &src,  
+                                                                     uint64_t immediate) 
+{
+    QSharedPointer<TranslationInstruction> ret(new TranslationInstruction(opcode));
+    return ret;
+}
+
+
+QSharedPointer<TranslationInstruction> TranslationInstruction::build(OpCode opcode, 
+                                                                     QSharedPointer<TranslationRegister> &dest, 
+                                                                     QSharedPointer<TranslationRegister> &src1, 
+                                                                     QSharedPointer<TranslationRegister> &src2) 
+{
+    QSharedPointer<TranslationInstruction> ret(new TranslationInstruction(opcode));
+    return ret;
+}
+
+
+QSharedPointer<TranslationInstruction> TranslationInstruction::build(OpCode opcode, 
+                                                                     QSharedPointer<TranslationRegister> &src1, 
+                                                                     QSharedPointer<TranslationRegister> &src2, 
+                                                                     QSharedPointer<TranslationLabel> &label) 
+{
+    QSharedPointer<TranslationInstruction> ret(new TranslationInstruction(opcode));
+    return ret;
+}
+
+
+QSharedPointer<TranslationInstruction> TranslationInstruction::build(OpCode opcode, 
+                                                                     QSharedPointer<TranslationRegister> &src,  
+                                                                     uint64_t immediate, 
+                                                                     QSharedPointer<TranslationLabel> &label) 
+{
+    QSharedPointer<TranslationInstruction> ret(new TranslationInstruction(opcode));
+    return ret;
 }

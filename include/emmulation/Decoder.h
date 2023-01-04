@@ -5,6 +5,7 @@
 #include <QSharedPointer>
 
 #include "CodeBlock.h"
+#include "Context.h"
 
 class Decoder: public QObject
 {
@@ -12,31 +13,17 @@ class Decoder: public QObject
 
 public:
 
-    enum FlowType
-    {
-        FALLTHROUGH,
-        BRANCH,
-        CALL,
-        RETURN,
-        TRAP,
-        ERROR
-    };
-
     Decoder(QObject *parent = nullptr);
     ~Decoder();
-    bool decode(QSharedPointer<CodeBlock> &block);
-
-signals:
-
-    void blockCompleted(FlowType reason);    
+    bool decode(QSharedPointer<CodeBlock> &block, QSharedPointer<Context> &context);
 
 protected:
 
-    virtual bool blockInit(QSharedPointer<CodeBlock> &block) = 0;
-    virtual bool blockComplete(QSharedPointer<CodeBlock> &block) = 0;
-    virtual bool instructionComplete(QSharedPointer<CodeBlock> &block) = 0;
-    virtual size_t instructionDecode(QSharedPointer<CodeBlock> &block, uint8_t *fetch) = 0;
-    virtual bool instructionInit(QSharedPointer<CodeBlock> &block) = 0;
+    virtual bool blockDecodeComplete(QSharedPointer<CodeBlock> &block, QSharedPointer<Context> &context) = 0;
+    virtual bool blockDecodeInit(QSharedPointer<CodeBlock> &block, QSharedPointer<Context> &context) = 0;
+    virtual size_t instructionDecode(QSharedPointer<CodeBlock> &block, QSharedPointer<Context> &context, uint8_t *fetch) = 0;
+    virtual bool instructionDecodeComplete(QSharedPointer<CodeBlock> &block, QSharedPointer<Context> &context) = 0;
+    virtual bool instructionDecodeInit(QSharedPointer<CodeBlock> &block, QSharedPointer<Context> &context) = 0;
 
 
 };

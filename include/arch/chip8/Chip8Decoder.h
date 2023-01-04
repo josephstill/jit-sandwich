@@ -17,11 +17,11 @@ public:
 
 protected:
 
-    virtual bool blockInit(QSharedPointer<CodeBlock> &block);
-    virtual bool blockComplete(QSharedPointer<CodeBlock> &block);
-    virtual bool instructionComplete(QSharedPointer<CodeBlock> &block);
-    virtual size_t instructionDecode(QSharedPointer<CodeBlock> &block, uint8_t *decode);
-    virtual bool instructionInit(QSharedPointer<CodeBlock> &block);
+    virtual bool blockDecodeComplete(QSharedPointer<CodeBlock> &block, QSharedPointer<Context> &context);
+    virtual bool blockDecodeInit(QSharedPointer<CodeBlock> &block, QSharedPointer<Context> &context);
+    virtual size_t instructionDecode(QSharedPointer<CodeBlock> &block, QSharedPointer<Context> &context, uint8_t *fetch);
+    virtual bool instructionDecodeComplete(QSharedPointer<CodeBlock> &block, QSharedPointer<Context> &context);
+    virtual bool instructionDecodeInit(QSharedPointer<CodeBlock> &block, QSharedPointer<Context> &context);
 
 private:
 

@@ -11,7 +11,7 @@ Decoder::~Decoder()
 
 }
 
-bool Decoder::decode(QSharedPointer<CodeBlock> &block)
+bool Decoder::decode(QSharedPointer<CodeBlock> &block, QSharedPointer<Context> &context)
 {
     return false;
 }

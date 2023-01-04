@@ -17,5 +17,10 @@ typedef union Chip8Instruction
     uint16_t instruction;
 } Chip8Instruction; 
 
+#define ROM_LOCATION (0x0200)
+#define SYSTEM_MEM   (0x0EA0)
+#define SCREEN_MEM   (0x0F00)
+#define END_MEM      (0x0FFF)
+#define MEM_SIZE     (END_MEM + 1)
 
 #endif

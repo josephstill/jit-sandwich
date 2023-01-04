@@ -2,7 +2,8 @@
 #define CODE_BLOCK_H
 
 #include <QObject>
-#include "Context.h"
+#include <QList>
+
 #include "TranslationInstruction.h"
 
 class CodeBlock: public QObject
@@ -11,14 +12,12 @@ class CodeBlock: public QObject
 
 public:
 
-    CodeBlock(Context &context, QObject *parent = nullptr);
+    CodeBlock(QObject *parent = nullptr);
     ~CodeBlock();
-    size_t addInstruction(TranslationInstruction &instruction);
+    void addInstruction(QSharedPointer<TranslationInstruction> instruction);
     void *cache() { return this->_cache; }
     size_t cacheSize() const { return this->_cacheSize; }
-    Context &context() { return this->_context; }
     void finalize();
-    //TranslationInstruction &operator[](size_t offset);
     void setCache(void *cache, size_t cacheSize);
     size_t size() const { return this->_size; }
 
@@ -29,8 +28,9 @@ private:
 
     void    *_cache;
     size_t  _cacheSize;
-    Context &_context;
     size_t  _size;  
+
+    QList<QSharedPointer<TranslationInstruction>> _instructions;
 };
 
 #endif

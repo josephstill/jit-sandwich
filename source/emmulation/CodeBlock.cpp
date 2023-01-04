@@ -1,11 +1,10 @@
 #include "CodeBlock.h"
 #include "Environ.h"
 
-CodeBlock::CodeBlock(Context &context, QObject *parent):
+CodeBlock::CodeBlock(QObject *parent):
     QObject(parent),
     _cache(nullptr),
     _cacheSize(0),
-    _context(context),
     _size(0)
 {
 
@@ -16,9 +15,9 @@ CodeBlock::~CodeBlock()
 
 }
 
-size_t CodeBlock::addInstruction(TranslationInstruction &instruction)
+void CodeBlock::addInstruction(QSharedPointer<TranslationInstruction> instruction)
 {
-    return 0;
+    this->_instructions.push_back(instruction);
 }
 
 void CodeBlock::deadCodeOptimization() 
@@ -36,11 +35,6 @@ void CodeBlock::livenessOptimization()
 {
 
 }
-
-// TranslationInstruction &CodeBlock::operator[](size_t offset)
-// {
-//     return nullptr;
-// }
 
 void CodeBlock::setCache(void *cache, size_t cacheSize)
 {
