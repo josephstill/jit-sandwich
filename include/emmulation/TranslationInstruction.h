@@ -2,9 +2,9 @@
 #define TRANSLATION_INSTRUCTION_H
 
 #include <QObject>
-#include <iostream>
 
 #include "TranslationRegister.h"
+#include "TranslationArgument.h"
 #include "TranslationLabel.h"
 
 /**
