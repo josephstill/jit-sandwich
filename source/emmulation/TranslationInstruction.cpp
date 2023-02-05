@@ -5,8 +5,11 @@ TranslationInstruction::TranslationInstruction(OpCode opcode, QObject *parent):
     QObject(parent),    
     _canOptimize(false),
     _destinationLabel(),   
+    _guest_asm(),
+    _host_asm(),
     _op(opcode),
-    _sourceLabel()
+    _sourceLabel(),
+    _translation_asm()
 {
 
 }
@@ -33,7 +36,7 @@ QSharedPointer<TranslationInstruction> TranslationInstruction::build(OpCode opco
 
 QSharedPointer<TranslationInstruction> TranslationInstruction::build(OpCode opcode, 
                                                                      QSharedPointer<TranslationRegister> &dest, 
-                                                                     uint64_t immediate)
+                                                                     QSharedPointer<TranslationArgument> &immediate)
 {
     QSharedPointer<TranslationInstruction> ret(new TranslationInstruction(opcode));
     return ret;
@@ -42,7 +45,7 @@ QSharedPointer<TranslationInstruction> TranslationInstruction::build(OpCode opco
 QSharedPointer<TranslationInstruction> TranslationInstruction::build(OpCode opcode, 
                                                                      QSharedPointer<TranslationRegister> &dest, 
                                                                      QSharedPointer<TranslationRegister> &src,  
-                                                                     uint64_t immediate) 
+                                                                     QSharedPointer<TranslationArgument> &immediate) 
 {
     QSharedPointer<TranslationInstruction> ret(new TranslationInstruction(opcode));
     return ret;
@@ -71,7 +74,7 @@ QSharedPointer<TranslationInstruction> TranslationInstruction::build(OpCode opco
 
 QSharedPointer<TranslationInstruction> TranslationInstruction::build(OpCode opcode, 
                                                                      QSharedPointer<TranslationRegister> &src,  
-                                                                     uint64_t immediate, 
+                                                                     QSharedPointer<TranslationArgument> &immediate, 
                                                                      QSharedPointer<TranslationLabel> &label) 
 {
     QSharedPointer<TranslationInstruction> ret(new TranslationInstruction(opcode));

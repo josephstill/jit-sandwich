@@ -2,6 +2,7 @@
 #define TRANSLATION_INSTRUCTION_H
 
 #include <QObject>
+#include <QString>
 
 #include "TranslationRegister.h"
 #include "TranslationArgument.h"
@@ -106,22 +107,29 @@ public:
     QSharedPointer<TranslationLabel> &destinationLabel() { return this->_destinationLabel; }
     OpCode opCode() const { return this->_op; }
     void setDestinationLabel(QSharedPointer<TranslationLabel> &label) { this->_destinationLabel = label; }
+    void setGuestAsm(QString &newGuestAsm) { this->_guest_asm = newGuestAsm; }
+    void setHostAsm(QString &newHostAsm) { this->_host_asm = newHostAsm; }
+    void setSourceLabel(QSharedPointer<TranslationLabel> &label) { this->_sourceLabel = label; }
+    void setTranslationAsm(QString &newTranslationAsm) { this->_translation_asm = newTranslationAsm; }
     QSharedPointer<TranslationLabel> &sourceLabel() { return this->_sourceLabel; }
 
     static QSharedPointer<TranslationInstruction> build(OpCode opcode);
     static QSharedPointer<TranslationInstruction> build(OpCode opcode, QSharedPointer<TranslationRegister> &dest, QSharedPointer<TranslationRegister> &src);
-    static QSharedPointer<TranslationInstruction> build(OpCode opcode, QSharedPointer<TranslationRegister> &dest, uint64_t immediate);
-    static QSharedPointer<TranslationInstruction> build(OpCode opcode, QSharedPointer<TranslationRegister> &dest, QSharedPointer<TranslationRegister> &src,  uint64_t immediate);
+    static QSharedPointer<TranslationInstruction> build(OpCode opcode, QSharedPointer<TranslationRegister> &dest, QSharedPointer<TranslationArgument> &immediate);
+    static QSharedPointer<TranslationInstruction> build(OpCode opcode, QSharedPointer<TranslationRegister> &dest, QSharedPointer<TranslationRegister> &src,  QSharedPointer<TranslationArgument> &immediate);
     static QSharedPointer<TranslationInstruction> build(OpCode opcode, QSharedPointer<TranslationRegister> &dest, QSharedPointer<TranslationRegister> &src1, QSharedPointer<TranslationRegister> &src2);
     static QSharedPointer<TranslationInstruction> build(OpCode opcode, QSharedPointer<TranslationRegister> &src1, QSharedPointer<TranslationRegister> &src2, QSharedPointer<TranslationLabel> &label);
-    static QSharedPointer<TranslationInstruction> build(OpCode opcode, QSharedPointer<TranslationRegister> &src,  uint64_t immediate, QSharedPointer<TranslationLabel> &label);
+    static QSharedPointer<TranslationInstruction> build(OpCode opcode, QSharedPointer<TranslationRegister> &src,  QSharedPointer<TranslationArgument> &immediate, QSharedPointer<TranslationLabel> &label);
 
 private:
 
     bool                             _canOptimize;
     QSharedPointer<TranslationLabel> _destinationLabel;
+    QString                          _guest_asm;
+    QString                          _host_asm;
     OpCode                           _op;
     QSharedPointer<TranslationLabel> _sourceLabel;
+    QString                          _translation_asm;
 };
 
 #endif

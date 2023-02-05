@@ -1,7 +1,7 @@
 #include "TranslationRegister.h"
 
 TranslationRegister::TranslationRegister(size_t size, QObject *parent):
-    QObject(parent),
+    TranslationArgument(parent),
     _size(size)
 {
 

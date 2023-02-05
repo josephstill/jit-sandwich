@@ -32,4 +32,9 @@ QSharedPointer<TranslationRegister> Context::getTranslationRegister(QVariant reg
     return ret;
 }
 
+QSharedPointer<TranslationRegister> Context::getTempTranslationRegister(uint8_t size)
+{
+    QSharedPointer<TranslationRegister> ret(new TranslationRegister(size));
+    return ret;
+}
 

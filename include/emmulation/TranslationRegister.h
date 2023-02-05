@@ -4,7 +4,9 @@
 #include <QObject>
 #include <QSharedPointer>
 
-class TranslationRegister: public QObject
+#include "TranslationArgument.h"
+
+class TranslationRegister: public TranslationArgument
 {
     Q_OBJECT
 

@@ -22,9 +22,9 @@ typedef struct DecoderCallbacks
     void (*xorEquals)(void *opaque, uint8_t regX, uint8_t regY);
     void (*incrementReg)(void *opaque, uint8_t regX, uint8_t regY);
     void (*decrementReg)(void *opaque, uint8_t regX, uint8_t regY);
-    void (*shiftRighImm)(void *opaque, uint8_t regX, uint8_t regY);
+    void (*shiftRight)(void *opaque, uint8_t regX);
     void (*reverseSubtract)(void *opaque, uint8_t regX, uint8_t regY);
-    void (*shiftLeftImm)(void *opaque, uint8_t regX, uint8_t regY);
+    void (*shiftLeft)(void *opaque, uint8_t regX);
     void (*ifNotEqualsReg)(void *opaque, uint8_t regX, uint8_t regY);
     void (*setAddress)(void *opaque, uint16_t address);
     void (*jumpOffset)(void *opaque, uint16_t offset);
@@ -147,7 +147,7 @@ static void decodeChip8(Chip8Instruction ins, DecoderCallbacks *callbacks)
                         break;
                     case 0x6:
                         {
-                            callbacks->shiftRighImm(callbacks->opaque, regX, regY);
+                            callbacks->shiftRight(callbacks->opaque, regX);
                         }
                         break;
                     case 0x7:
@@ -157,7 +157,7 @@ static void decodeChip8(Chip8Instruction ins, DecoderCallbacks *callbacks)
                         break;
                     case 0xE:
                         {
-                            callbacks->shiftLeftImm(callbacks->opaque, regX, regY);
+                            callbacks->shiftLeft(callbacks->opaque, regX);
                         }
                         break;
                     default:

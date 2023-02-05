@@ -29,6 +29,8 @@ static void chip8_decode_clearDisplay(void *opaque)
     QSharedPointer<CodeBlock>   &block   = ((DecodeState *) opaque)->code;
     QSharedPointer<Context>     &context = ((DecodeState *) opaque)->context;
     
+    
+
     GuestAddress screen_address = SCREEN_MEM; 
     uint8_t *buffer = nullptr;
     size_t buffer_size = END_MEM - SCREEN_MEM; 
@@ -36,9 +38,11 @@ static void chip8_decode_clearDisplay(void *opaque)
 
     for (uint32_t idx = 0; idx < buffer_size; idx += HOST_GP_REGISTER_SIZE)
     {
+        QSharedPointer<TranslationArgument> zero(0);
+        QSharedPointer<TranslationArgument> address(new TranslationArgument((uint64_t) buffer + idx));
         QSharedPointer<TranslationRegister> temp(new TranslationRegister(HOST_GP_REGISTER_SIZE));
-        block->addInstruction(TranslationInstruction::build(TranslationInstruction::MOVI, temp,(uint64_t) buffer + idx));
-        block->addInstruction(TranslationInstruction::build(TranslationInstruction::STI,  temp, 0));
+        block->addInstruction(TranslationInstruction::build(TranslationInstruction::MOVI, temp, address));
+        block->addInstruction(TranslationInstruction::build(TranslationInstruction::STI,  temp, zero));
     }
 }
 
@@ -49,8 +53,10 @@ static void chip8_decode_doReturn(void *opaque)
     
     QSharedPointer<TranslationRegister> pc = context->getTranslationRegister(QVariant("pc"));
     QSharedPointer<TranslationRegister> sp = context->getTranslationRegister(QVariant("sp"));
+    QSharedPointer<TranslationArgument> step(new TranslationArgument(pc->size()));
+    
     block->addInstruction(TranslationInstruction::build(TranslationInstruction::LD, pc, sp));
-    block->addInstruction(TranslationInstruction::build(TranslationInstruction::ADDI, sp, sp, pc->size()));
+    block->addInstruction(TranslationInstruction::build(TranslationInstruction::ADDI, sp, sp, step));
 
     context->setState(Context::DEVIATION);    
 }
@@ -61,7 +67,9 @@ static void chip8_decode_doGoto(void *opaque, uint16_t address)
     QSharedPointer<Context>     &context = ((DecodeState *) opaque)->context;
     
     QSharedPointer<TranslationRegister> pc = context->getTranslationRegister(QVariant("pc"));
-    block->addInstruction(TranslationInstruction::build(TranslationInstruction::MOVI, pc, address));
+    QSharedPointer<TranslationArgument> taddress(new TranslationArgument(address));
+    
+    block->addInstruction(TranslationInstruction::build(TranslationInstruction::MOVI, pc, taddress));
 
     context->setState(Context::DEVIATION);       
 }
@@ -74,9 +82,12 @@ static void chip8_decode_call(void *opaque, uint16_t address)
     QSharedPointer<TranslationRegister> pc = context->getTranslationRegister(QVariant("pc"));
     QSharedPointer<TranslationRegister> sp = context->getTranslationRegister(QVariant("sp"));
 
-    block->addInstruction(TranslationInstruction::build(TranslationInstruction::SUBI, sp, sp, pc->size()));
+    QSharedPointer<TranslationArgument> taddress(new TranslationArgument(address));
+    QSharedPointer<TranslationArgument> tpcSize(new TranslationArgument(pc->size()));
+
+    block->addInstruction(TranslationInstruction::build(TranslationInstruction::SUBI, sp, sp, tpcSize));
     block->addInstruction(TranslationInstruction::build(TranslationInstruction::ST, sp, pc));
-    block->addInstruction(TranslationInstruction::build(TranslationInstruction::MOVI, pc, address));
+    block->addInstruction(TranslationInstruction::build(TranslationInstruction::MOVI, pc, taddress));
     
     context->setState(Context::DEVIATION);
 }
@@ -92,15 +103,17 @@ static void chip8_decode_ifEqualsImm(void *opaque, uint8_t reg, uint8_t imm)
     QSharedPointer<TranslationRegister> pc   = context->getTranslationRegister(QVariant("pc"));
     QSharedPointer<TranslationRegister> temp(new TranslationRegister(sizeof(uint8_t)));
  
+    QSharedPointer<TranslationArgument> timm(new TranslationArgument(imm));
+    QSharedPointer<TranslationArgument> addressInc(new TranslationArgument(sizeof(Chip8Instruction)));
+
     block->addInstruction(TranslationInstruction::build(TranslationInstruction::XOR,  temp, temp, temp));   
-    block->addInstruction(TranslationInstruction::build(TranslationInstruction::BNEI, treg, imm,  branchNotTaken));
-    block->addInstruction(TranslationInstruction::build(TranslationInstruction::MOVI, temp, sizeof(Chip8Instruction)));
+    block->addInstruction(TranslationInstruction::build(TranslationInstruction::BNEI, treg, timm, branchNotTaken));
+    block->addInstruction(TranslationInstruction::build(TranslationInstruction::MOVI, temp, addressInc));
 
     QSharedPointer<TranslationInstruction> pcIncrement = TranslationInstruction::build(TranslationInstruction::ADD, pc, pc, temp);
     pcIncrement->setDestinationLabel(branchNotTaken);
     block->addInstruction(pcIncrement); 
 
-    
     context->setState(Context::DEVIATION);
 }
 
@@ -115,9 +128,12 @@ static void chip8_decode_ifNotEqualsImm(void *opaque, uint8_t reg, uint8_t imm)
     QSharedPointer<TranslationRegister> pc   = context->getTranslationRegister(QVariant("pc"));
     QSharedPointer<TranslationRegister> temp(new TranslationRegister(sizeof(uint8_t)));
  
+    QSharedPointer<TranslationArgument> timm(new TranslationArgument(imm));
+    QSharedPointer<TranslationArgument> addressInc(new TranslationArgument(sizeof(Chip8Instruction)));
+
     block->addInstruction(TranslationInstruction::build(TranslationInstruction::XOR,  temp, temp, temp));   
-    block->addInstruction(TranslationInstruction::build(TranslationInstruction::BEQI, treg, imm,  branchNotTaken));
-    block->addInstruction(TranslationInstruction::build(TranslationInstruction::MOVI, temp, sizeof(Chip8Instruction)));
+    block->addInstruction(TranslationInstruction::build(TranslationInstruction::BEQI, treg, timm,  branchNotTaken));
+    block->addInstruction(TranslationInstruction::build(TranslationInstruction::MOVI, temp, addressInc));
 
     QSharedPointer<TranslationInstruction> pcIncrement = TranslationInstruction::build(TranslationInstruction::ADD, pc, pc, temp);
     pcIncrement->setDestinationLabel(branchNotTaken);
@@ -138,9 +154,11 @@ static void chip8_decode_ifEqualsReg(void *opaque, uint8_t regX, uint8_t regY)
     QSharedPointer<TranslationRegister> pc    = context->getTranslationRegister(QVariant("pc"));  
     QSharedPointer<TranslationRegister> temp(new TranslationRegister(sizeof(uint8_t)));
 
+    QSharedPointer<TranslationArgument> addressInc(new TranslationArgument(sizeof(Chip8Instruction)));
+
     block->addInstruction(TranslationInstruction::build(TranslationInstruction::XOR,  temp, temp, temp));    
     block->addInstruction(TranslationInstruction::build(TranslationInstruction::BNE,  tregX, tregY, branchNotTaken));
-    block->addInstruction(TranslationInstruction::build(TranslationInstruction::MOVI, temp, sizeof(Chip8Instruction)));
+    block->addInstruction(TranslationInstruction::build(TranslationInstruction::MOVI, temp, addressInc));
     
     QSharedPointer<TranslationInstruction> pcIncrement = TranslationInstruction::build(TranslationInstruction::ADD, pc, pc, temp);
     pcIncrement->setDestinationLabel(branchNotTaken);
@@ -156,7 +174,9 @@ static void chip8_decode_setRegisterImm(void *opaque, uint8_t reg, uint8_t imm)
 
     QSharedPointer<TranslationRegister> treg = context->getTranslationRegister(QVariant(reg));  
 
-    block->addInstruction(TranslationInstruction::build(TranslationInstruction::MOVI, treg, imm));
+    QSharedPointer<TranslationArgument> timm(new TranslationArgument(imm));
+
+    block->addInstruction(TranslationInstruction::build(TranslationInstruction::MOVI, treg, timm));
 }
 
 static void chip8_decode_incrementImm(void *opaque, uint8_t reg, uint8_t imm) 
@@ -166,7 +186,9 @@ static void chip8_decode_incrementImm(void *opaque, uint8_t reg, uint8_t imm)
 
     QSharedPointer<TranslationRegister> treg = context->getTranslationRegister(QVariant(reg));  
 
-    block->addInstruction(TranslationInstruction::build(TranslationInstruction::ADDI, treg, treg, imm));    
+    QSharedPointer<TranslationArgument> timm(new TranslationArgument(imm));
+
+    block->addInstruction(TranslationInstruction::build(TranslationInstruction::ADDI, treg, treg, timm));    
 }
 
 static void chip8_decode_setRegister(void *opaque, uint8_t regX, uint8_t regY) 
@@ -217,7 +239,8 @@ static void chip8_decode_incrementReg(void *opaque, uint8_t regX, uint8_t regY)
     QSharedPointer<TranslationRegister> tregX = context->getTranslationRegister(QVariant(regX));  
     QSharedPointer<TranslationRegister> tregY = context->getTranslationRegister(QVariant(regY)); 
     block->addInstruction(TranslationInstruction::build(TranslationInstruction::ADD, tregX, tregX, tregY)); 
-    // TODO VF
+
+    // TODO Carry into VF
 }
 
 static void chip8_decode_decrementReg(void *opaque, uint8_t regX, uint8_t regY) 
@@ -228,17 +251,23 @@ static void chip8_decode_decrementReg(void *opaque, uint8_t regX, uint8_t regY)
     QSharedPointer<TranslationRegister> tregX = context->getTranslationRegister(QVariant(regX));  
     QSharedPointer<TranslationRegister> tregY = context->getTranslationRegister(QVariant(regY)); 
     block->addInstruction(TranslationInstruction::build(TranslationInstruction::SUB, tregX, tregX, tregY)); 
-    // TODO VF
+    
+    // TODO borrow flag
 }
 
-static void chip8_decode_shiftRighImm(void *opaque, uint8_t regX, uint8_t regY) 
+static void chip8_decode_shiftRight(void *opaque, uint8_t regX) 
 {
     QSharedPointer<CodeBlock>   &block   = ((DecodeState *) opaque)->code;
     QSharedPointer<Context>     &context = ((DecodeState *) opaque)->context;
 
     QSharedPointer<TranslationRegister> tregX = context->getTranslationRegister(QVariant(regX));  
     QSharedPointer<TranslationRegister> tregF = context->getTranslationRegister(QVariant(0xf)); 
-    // REG_F = REG_X & 0x1
+
+    QSharedPointer<TranslationArgument> shiftImm(new TranslationArgument(1));
+    QSharedPointer<TranslationArgument> andImm(new TranslationArgument(1));
+
+    block->addInstruction(TranslationInstruction::build(TranslationInstruction::ANDI, tregF, tregX, andImm)); 
+    block->addInstruction(TranslationInstruction::build(TranslationInstruction::SHRI, tregX, tregX, shiftImm)); 
 }
 
 static void chip8_decode_reverseSubtract(void *opaque, uint8_t regX, uint8_t regY) 
@@ -249,17 +278,26 @@ static void chip8_decode_reverseSubtract(void *opaque, uint8_t regX, uint8_t reg
     QSharedPointer<TranslationRegister> tregX = context->getTranslationRegister(QVariant(regX));  
     QSharedPointer<TranslationRegister> tregY = context->getTranslationRegister(QVariant(regY)); 
     block->addInstruction(TranslationInstruction::build(TranslationInstruction::SUB, tregX, tregY, tregX)); 
-    // TODO VF
+    
+    // TODO borrow flag
 }
 
-static void chip8_decode_shiftLeftImm(void *opaque, uint8_t regX, uint8_t regY) 
+static void chip8_decode_shiftLeft(void *opaque, uint8_t regX) 
 {
     QSharedPointer<CodeBlock>   &block   = ((DecodeState *) opaque)->code;
     QSharedPointer<Context>     &context = ((DecodeState *) opaque)->context;
 
     QSharedPointer<TranslationRegister> tregX = context->getTranslationRegister(QVariant(regX));  
     QSharedPointer<TranslationRegister> tregF = context->getTranslationRegister(QVariant(0xf)); 
-    // TODO look me up
+    QSharedPointer<TranslationRegister> temp(new TranslationRegister(sizeof(uint8_t)));
+
+    QSharedPointer<TranslationArgument> shiftImm(new TranslationArgument(1));
+    QSharedPointer<TranslationArgument> shiftImm2(new TranslationArgument(7));    
+    QSharedPointer<TranslationArgument> andImm(new TranslationArgument(0x80));
+
+    block->addInstruction(TranslationInstruction::build(TranslationInstruction::ANDI, temp, tregX, andImm)); 
+    block->addInstruction(TranslationInstruction::build(TranslationInstruction::SHRI, tregF, temp, shiftImm2));     
+    block->addInstruction(TranslationInstruction::build(TranslationInstruction::SHLI, tregX, tregX, shiftImm)); 
 }
 
 static void chip8_decode_ifNotEqualsReg(void *opaque, uint8_t regX, uint8_t regY) 
@@ -273,10 +311,11 @@ static void chip8_decode_ifNotEqualsReg(void *opaque, uint8_t regX, uint8_t regY
     QSharedPointer<TranslationRegister> tregY = context->getTranslationRegister(QVariant(regY)); 
     QSharedPointer<TranslationRegister> pc   = context->getTranslationRegister(QVariant("pc"));  
     QSharedPointer<TranslationRegister> temp(new TranslationRegister(sizeof(uint8_t)));
+    QSharedPointer<TranslationArgument> addressInc(new TranslationArgument(sizeof(Chip8Instruction)));
 
     block->addInstruction(TranslationInstruction::build(TranslationInstruction::XOR,  temp, temp, temp));    
     block->addInstruction(TranslationInstruction::build(TranslationInstruction::BEQ,  tregX, tregY, branchNotTaken));
-    block->addInstruction(TranslationInstruction::build(TranslationInstruction::MOVI, temp, sizeof(Chip8Instruction)));
+    block->addInstruction(TranslationInstruction::build(TranslationInstruction::MOVI, temp, addressInc));
     
     QSharedPointer<TranslationInstruction> pcIncrement = TranslationInstruction::build(TranslationInstruction::ADD, pc, pc, temp);
     pcIncrement->setDestinationLabel(branchNotTaken);
@@ -400,9 +439,9 @@ Chip8Decoder::Chip8Decoder(QObject *parent):
     this->callbacks.xorEquals = chip8_decode_xorEquals;
     this->callbacks.incrementReg = chip8_decode_incrementReg;
     this->callbacks.decrementReg = chip8_decode_decrementReg;
-    this->callbacks.shiftRighImm = chip8_decode_shiftRighImm;
+    this->callbacks.shiftRight = chip8_decode_shiftRight;
     this->callbacks.reverseSubtract = chip8_decode_reverseSubtract;
-    this->callbacks.shiftLeftImm = chip8_decode_shiftLeftImm;
+    this->callbacks.shiftLeft = chip8_decode_shiftLeft;
     this->callbacks.ifNotEqualsReg = chip8_decode_ifNotEqualsReg;
     this->callbacks.setAddress = chip8_decode_setAddress;
     this->callbacks.jumpOffset = chip8_decode_jumpOffset;

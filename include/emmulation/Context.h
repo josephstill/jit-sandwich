@@ -34,6 +34,7 @@ public:
     void addTranslationRegister(QSharedPointer<TranslationRegister> &reg, QVariant registerId);
     GuestAddress currentPc() const { return this->_currentPc; }
     QSharedPointer<TranslationRegister> getTranslationRegister(QVariant registerId);
+    QSharedPointer<TranslationRegister> getTempTranslationRegister(uint8_t size);
     uint64_t instructionLimit() const { return this->_instructionLimit; }
     GuestAddress nextPc() const { return this->_nextPc; }
     void setCurrentPc(GuestAddress cPc) { this->_currentPc = cPc; }
