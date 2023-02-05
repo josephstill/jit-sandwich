@@ -482,7 +482,7 @@ size_t Chip8Decoder::instructionDecode(QSharedPointer<CodeBlock> &block, QShared
     decodeChip8(instriction, &this->callbacks);
     delete (DecodeState *) this->callbacks.opaque;
     this->callbacks.opaque = nullptr;
-    return sizeof(uint16_t);
+    return sizeof(Chip8Instruction);
 }
 
 bool Chip8Decoder::instructionDecodeComplete(QSharedPointer<CodeBlock> &block, QSharedPointer<Context> &context) 

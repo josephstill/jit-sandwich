@@ -96,8 +96,9 @@ public:
         ADD, ADDI, SUB, SUBI, RSUBI, MULT, MULTI, DIV, DIVI, RDIVI,
         LT, LTI, GT, GTI, 
         LTE, LTEI, GTE, GTEI, EQ, EQI, NE, NEI,
-        BLT, BLTI, BGT, BGTI, 
-        BLTE, BLTEI, BGTE, BGTEI, BEQ, BEQI, BNE, BNEI
+        BLT, BLTI, BGT, BGTI,
+        BEQ, BEQI, BNE, BNEI,
+        CF, OF
     };
     
     TranslationInstruction(OpCode opcode, QObject *parent = nullptr);
